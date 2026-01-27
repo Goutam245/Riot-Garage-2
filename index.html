@@ -1,0 +1,2608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riot Garage™ | Interactive Workflow and Product Framework</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS Variables - Riot Garage Brand Colors */
+        :root {
+            --riot-black: #0A0A0A;
+            --riot-copper: #B87333;
+            --riot-copper-bright: #D18B47;
+            --riot-orange: #E67E22;
+            --gray-dark: #1A1C1E;
+            --gray-medium: #2D2F31;
+            --gray-light: #3E4042;
+            --off-white: #F5F5F5;
+            --text-primary: #E8E8E8;
+            --text-secondary: #AAAAAA;
+            --shadow-heavy: 0 10px 30px rgba(0, 0, 0, 0.5);
+            --shadow-medium: 0 5px 15px rgba(0, 0, 0, 0.3);
+            --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.2);
+            --transition-fast: 200ms ease;
+            --transition-medium: 300ms ease;
+            --transition-slow: 500ms ease;
+            --border-radius-sm: 4px;
+            --border-radius-md: 8px;
+            --border-radius-lg: 12px;
+            --border-radius-xl: 20px;
+        }
+
+        /* Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--riot-black);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            transition: padding-top var(--transition-medium);
+        }
+
+        /* Compact mode for mobile */
+        body.interacting .hero-section {
+            padding: 1rem 2rem !important;
+            min-height: auto !important;
+        }
+
+        body.interacting .dial-container {
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            width: 180px;
+            height: 180px;
+            z-index: 100;
+            cursor: help;
+        }
+
+        body.interacting .dial-container.collapsed {
+            opacity: 0.3;
+            transform: scale(0.5);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--gray-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gray-light);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--riot-copper);
+        }
+
+        /* Utility Classes */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--riot-copper);
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* HEADER */
+        .riot-header {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(184, 115, 51, 0.2);
+            height: 120px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: all var(--transition-medium);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .riot-header.scrolled {
+            height: 80px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-img {
+            height: 60px;
+            width: auto;
+            object-fit: contain;
+            transition: all var(--transition-medium);
+        }
+
+        .riot-header.scrolled .logo-img {
+            height: 45px;
+        }
+
+        .logo-text-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-text {
+            font-weight: 900;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, var(--riot-copper), var(--riot-copper-bright));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+
+        .tagline {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .go-bag-counter {
+            position: relative;
+            cursor: pointer;
+            background: var(--gray-dark);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(184, 115, 51, 0.3);
+            transition: all var(--transition-fast);
+        }
+
+        .go-bag-counter:hover {
+            border-color: var(--riot-copper);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(184, 115, 51, 0.2);
+        }
+
+        .go-bag-icon {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+        }
+
+        .counter-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--riot-copper);
+            color: var(--off-white);
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--riot-black);
+            transition: all var(--transition-fast);
+        }
+
+        .go-bag-counter:hover .counter-badge {
+            transform: scale(1.1);
+        }
+
+        /* HERO SECTION */
+        .hero-section {
+            padding: 4rem 2rem;
+            text-align: center;
+            background: linear-gradient(rgba(10, 10, 10, 0.9), rgba(10, 10, 10, 0.7)), 
+                        radial-gradient(circle at 20% 50%, rgba(184, 115, 51, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(184, 115, 51, 0.05) 0%, transparent 50%);
+            border-bottom: 1px solid rgba(184, 115, 51, 0.1);
+            transition: all var(--transition-medium);
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #E8E8E8, #B87333);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        /* RIOT LINE SECTION */
+        .riot-line-section {
+            padding: 2rem 2rem 1rem;
+            position: relative;
+            margin-bottom: 0.5rem;
+        }
+
+        /* FIX #5: EQUAL WIDTH STEP CARDS - WITH HORIZONTAL SCROLL */
+        .riot-line-container {
+            display: flex;
+            gap: 0.35rem;
+            justify-content: flex-start;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            overflow-y: visible;
+            padding: 0;
+            padding-bottom: 1rem;
+            flex-wrap: nowrap;
+            max-width: 1300px;
+            margin-left: auto;
+            margin-right: auto;
+            scroll-behavior: smooth;
+        }
+
+        /* Custom scrollbar for Riot Line container */
+        .riot-line-container::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .riot-line-container::-webkit-scrollbar-track {
+            background: rgba(62, 64, 66, 0.3);
+            border-radius: 3px;
+        }
+
+        .riot-line-container::-webkit-scrollbar-thumb {
+            background: rgba(184, 115, 51, 0.5);
+            border-radius: 3px;
+        }
+
+        .riot-line-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(184, 115, 51, 0.7);
+        }
+
+        /* Ensure step cards maintain equal width */
+        .step-card {
+            flex: 0 0 calc(12.5% - 0.3rem);
+            min-width: 120px;
+            background: var(--gray-dark);
+            border-radius: var(--border-radius-lg);
+            padding: 0.7rem 0.35rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-medium);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+            /* FIX #4: Add smooth transition */
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+
+        /* Active steps - keep bright */
+        .step-card.active {
+            opacity: 1 !important;
+            border-color: var(--riot-copper) !important;
+            box-shadow: 0 0 20px rgba(184, 115, 51, 0.4), var(--shadow-heavy);
+            transform: translateY(-5px) scale(1.02);
+            /* FIX #5: Make active steps stand out */
+            background: rgba(184, 115, 51, 0.05) !important;
+            animation: pulseActive 2s ease-in-out infinite !important;
+        }
+
+        .step-card.active::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(to right, transparent, var(--riot-copper-bright), transparent);
+            transform: scaleX(1);
+            transition: transform var(--transition-medium);
+        }
+
+        /* FIX #2: ENHANCED INACTIVE STEPS */
+        .step-card.inactive {
+            opacity: 0.4 !important;
+            filter: grayscale(0.9) !important;
+            pointer-events: none;
+            transition: all 0.4s ease !important;
+        }
+
+        .step-card.inactive .step-number {
+            background: rgba(100, 100, 100, 0.5) !important;
+            border-color: rgba(100, 100, 100, 0.3) !important;
+            color: #888 !important;
+        }
+
+        .step-card.inactive .step-name {
+            color: #777 !important;
+        }
+
+        .step-card.inactive .step-category {
+            color: #666 !important;
+        }
+
+        /* FIX #2: ENHANCED BYPASSED STEPS - SUPER OBVIOUS FOR TESTING */
+        .step-card.bypassed {
+            opacity: 0.25 !important;
+            border: 3px dashed #ff4444 !important; /* RED for testing - change to copper later */
+            filter: grayscale(1) !important;
+            position: relative !important;
+            background: rgba(255, 68, 68, 0.05) !important; /* Slight red tint for testing */
+            pointer-events: none !important;
+            animation: bypassedPulse 2s ease-in-out infinite !important;
+        }
+
+        @keyframes bypassedPulse {
+            0%, 100% {
+                opacity: 0.25;
+                transform: scale(0.98);
+            }
+            50% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+        }
+
+        .step-card.bypassed::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255, 68, 68, 0.1) 10px,
+                rgba(255, 68, 68, 0.1) 20px
+            );
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* FIX #2: SUPER OBVIOUS SKIPPED LABEL */
+        .step-card.bypassed::after {
+            content: 'SKIPPED' !important;
+            position: absolute !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) rotate(-15deg) !important;
+            font-size: 1.1rem !important; /* Bigger for visibility */
+            font-weight: 900 !important;
+            color: #ff0000 !important; /* Bright red for testing */
+            background: rgba(0, 0, 0, 0.85) !important;
+            padding: 8px 16px !important;
+            border-radius: 6px !important;
+            letter-spacing: 2px !important;
+            z-index: 10 !important;
+            border: 2px solid #ff0000 !important;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5) !important;
+            pointer-events: none !important;
+        }
+
+        /* FIX #2: ENHANCED ACTIVE STEPS */
+        .step-card:not(.inactive):not(.bypassed) {
+            opacity: 1 !important;
+            border: 2px solid var(--riot-copper) !important;
+            box-shadow: 0 0 20px rgba(184, 115, 51, 0.5) !important;
+            background: rgba(184, 115, 51, 0.08) !important;
+            animation: activeGlow 2s ease-in-out infinite !important;
+            transition: all 0.3s ease !important;
+        }
+
+        @keyframes activeGlow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(184, 115, 51, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(184, 115, 51, 0.7);
+            }
+        }
+
+        .step-card.active {
+            border-width: 3px !important;
+            transform: scale(1.05) !important;
+        }
+
+        .step-card.active .step-number {
+            background: rgba(184, 115, 51, 1) !important;
+            box-shadow: 0 0 15px rgba(184, 115, 51, 0.7) !important;
+            border-color: var(--riot-copper-bright) !important;
+            color: #fff !important;
+        }
+
+        .step-card.inactive:hover {
+            opacity: 0.5;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .step-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(to right, transparent, var(--riot-copper), transparent);
+            transform: scaleX(0);
+            transition: transform var(--transition-medium);
+        }
+
+        .step-card.bypassed:hover {
+            opacity: 0.35 !important;
+            transform: none !important;
+            box-shadow: none !important;
+            cursor: not-allowed !important;
+        }
+
+        /* FIX #5: SMALLER STEP NUMBER */
+        .step-number {
+            width: 26px;
+            height: 26px;
+            background: rgba(184, 115, 51, 0.85);
+            border: 1px solid rgba(184, 115, 51, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: var(--off-white);
+            box-shadow: 0 1px 3px rgba(184, 115, 51, 0.1);
+            transition: all var(--transition-medium);
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-card.inactive .step-number {
+            background: rgba(62, 64, 66, 0.5) !important;
+            border-color: rgba(170, 170, 170, 0.3) !important;
+            color: var(--text-secondary) !important;
+        }
+
+        .step-card.bypassed .step-number {
+            background: rgba(255, 0, 0, 0.3) !important; /* Red tint for testing */
+            border-color: rgba(255, 0, 0, 0.5) !important;
+            color: #aaa !important;
+        }
+
+        .step-card.active .step-number {
+            background: rgba(184, 115, 51, 1) !important;
+            box-shadow: 0 0 12px rgba(184, 115, 51, 0.5) !important;
+            border-color: var(--riot-copper-bright) !important;
+        }
+
+        /* FIX #5: SMALLER STEP NAME */
+        .step-name {
+            font-weight: 700;
+            font-size: 0.75rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-card.inactive .step-name {
+            color: var(--text-secondary) !important;
+        }
+
+        .step-card.bypassed .step-name {
+            color: #ff6666 !important; /* Red tint for testing */
+            text-decoration: line-through !important;
+        }
+
+        /* FIX #5: SMALLER STEP CATEGORY */
+        .step-category {
+            font-size: 0.6rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 1.1;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-card.inactive .step-category {
+            color: #888 !important;
+        }
+
+        .step-card.bypassed .step-category {
+            color: #ff9999 !important; /* Red tint for testing */
+        }
+
+        /* DIAL - Static Arrow Version - MOVED CLOSER */
+        .dial-container {
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            width: 160px;
+            height: 160px;
+            z-index: 100;
+            cursor: help;
+            transition: all var(--transition-medium);
+        }
+
+        .dial-container.collapsed {
+            opacity: 0.3;
+            transform: scale(0.7);
+            pointer-events: none;
+        }
+
+        /* Fixed Dial Arrow - Never Rotates */
+        .dial-arrow {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 20px solid #B87333;
+            z-index: 102;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        /* Dial Background - Static */
+        .dial-background {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .dial-bg-image {
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+            margin: 0 auto;
+            transition: opacity 0.3s ease;
+        }
+
+        .dial-container.collapsed .dial-bg-image {
+            opacity: 0.3;
+        }
+
+        .dial-tooltip {
+            position: absolute;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1A1C1E;
+            border: 2px solid #B87333;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            text-align: center;
+            width: 220px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 300ms ease;
+            z-index: 101;
+        }
+
+        .dial-container:hover .dial-tooltip {
+            opacity: 1;
+        }
+
+        /* Active Step Highlight on Dial */
+        .step-highlight {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: rgba(184, 115, 51, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 0.9rem;
+            transform: translate(-50%, -50%);
+            z-index: 101;
+            border: 2px solid white;
+            box-shadow: 0 0 10px rgba(184, 115, 51, 0.5);
+            transition: all var(--transition-medium);
+        }
+
+        .dial-container.collapsed .step-highlight {
+            transform: translate(-50%, -50%) scale(0.8);
+            opacity: 0.6;
+        }
+
+        /* PRODUCT INFORMATION ZONE (NOW BEFORE INTERVENTION ZONE) */
+        .product-info-zone {
+            padding: 2rem;
+            background: var(--gray-dark);
+            border-radius: var(--border-radius-lg);
+            margin: 0.5rem 2rem 2rem;
+            box-shadow: var(--shadow-heavy);
+            border: 1px solid rgba(184, 115, 51, 0.1);
+        }
+
+        .piz-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+
+        .product-image-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Product Image Styling */
+        .product-image-container {
+            background: #1A1C1E;
+            border-radius: 12px;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+        }
+
+        .product-bottle-image {
+            transition: transform 0.3s ease;
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            display: block;
+        }
+
+        .product-bottle-image:hover {
+            transform: scale(1.05);
+        }
+
+        .product-details {
+            background: rgba(10, 10, 10, 0.7);
+            border-radius: var(--border-radius-md);
+            padding: 2rem;
+            border: 1px solid rgba(184, 115, 51, 0.1);
+        }
+
+        .product-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(184, 115, 51, 0.2);
+        }
+
+        .product-step {
+            display: inline-block;
+            background: var(--riot-copper);
+            color: var(--off-white);
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .product-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+
+        .product-sku-large {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .product-blurb {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--text-primary);
+            margin-bottom: 2rem;
+        }
+
+        .info-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            color: var(--riot-copper);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .section-icon {
+            font-size: 1rem;
+        }
+
+        .section-content {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .section-content ul {
+            padding-left: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .section-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .add-to-go-bag {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(184, 115, 51, 0.2);
+        }
+
+        .go-bag-btn {
+            background: linear-gradient(to right, var(--riot-copper), var(--riot-copper-bright));
+            color: var(--off-white);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: var(--border-radius-md);
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all var(--transition-medium);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .go-bag-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(184, 115, 51, 0.3);
+        }
+
+        .go-bag-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .go-bag-btn.added {
+            background: linear-gradient(to right, #2E7D32, #4CAF50);
+            cursor: default;
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.7);
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+        }
+
+        /* INTERVENTION ZONE - MOVED AFTER PRODUCT INFO */
+        .intervention-zone {
+            padding: 2rem;
+            background: rgba(26, 28, 30, 0.7);
+            border-radius: var(--border-radius-lg);
+            margin: 1rem 2rem 2rem;
+            border: 1px solid rgba(184, 115, 51, 0.1);
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .intervention-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 2rem;
+            color: var(--riot-copper);
+        }
+
+        .intervention-icon {
+            font-size: 1.5rem;
+        }
+
+        .intervention-groups {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+        }
+
+        .intervention-group {
+            flex: 1;
+            min-width: 300px;
+            background: var(--gray-dark);
+            border-radius: var(--border-radius-md);
+            padding: 1.5rem;
+            border: 1px solid rgba(184, 115, 51, 0.2);
+        }
+
+        .group-title {
+            font-weight: 700;
+            color: var(--riot-copper);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .waypoint-indicator {
+            background: var(--gray-medium);
+            color: var(--text-secondary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        .intervention-products {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .intervention-product {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1rem;
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border-left: 3px solid transparent;
+            position: relative;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .intervention-product:hover {
+            background: rgba(184, 115, 51, 0.05);
+            border-left-color: var(--riot-copper);
+            transform: translateX(5px);
+        }
+
+        .intervention-product.active {
+            background: rgba(184, 115, 51, 0.1);
+            border-left-color: var(--riot-copper-bright);
+        }
+
+        .product-name {
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .product-sku {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .field-wash-tooltip {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 12px;
+            background: #1A1C1E;
+            border: 1px solid #B87333;
+            padding: 1rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            text-align: left;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 300ms ease;
+            width: 320px;
+            z-index: 1000;
+        }
+
+        .intervention-product[data-product="x-field-wash"]:hover .field-wash-tooltip {
+            opacity: 1;
+        }
+
+        .arrow-visualization {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(10, 10, 10, 0.5);
+            border-radius: var(--border-radius-md);
+            border: 1px dashed rgba(184, 115, 51, 0.3);
+            display: none;
+        }
+
+        .arrow-visualization.active {
+            display: block;
+            animation: fadeIn var(--transition-medium);
+        }
+
+        .arrow-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .arrow-line {
+            height: 2px;
+            background: var(--riot-copper);
+            flex-grow: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .arrow-line::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--riot-copper-bright), transparent);
+            animation: arrowFlow 2s infinite linear;
+        }
+
+        .arrow-head {
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 12px solid var(--riot-copper);
+        }
+
+        .arrow-description {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* VISUAL LEGEND */
+        .visual-legend {
+            padding: 2rem;
+            background: rgba(26, 28, 30, 0.7);
+            border-radius: var(--border-radius-lg);
+            margin: 0 2rem 3rem;
+            border: 1px solid rgba(184, 115, 51, 0.1);
+        }
+
+        .legend-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .full-contact {
+            background: var(--riot-copper);
+        }
+
+        .rinseless {
+            background: var(--gray-light);
+        }
+
+        .legend-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        /* TOAST NOTIFICATION */
+        .go-bag-toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--gray-dark);
+            border-left: 4px solid var(--riot-copper);
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--shadow-heavy);
+            transform: translateX(150%);
+            transition: transform var(--transition-medium);
+            z-index: 2000;
+            max-width: 300px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .go-bag-toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-icon {
+            color: var(--riot-copper);
+            font-size: 1.3rem;
+        }
+
+        .toast-content h4 {
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .toast-content p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* PROCEDURAL CALLOUT */
+        .procedural-callout {
+            padding: 2rem;
+            background: linear-gradient(to right, rgba(184, 115, 51, 0.1), transparent);
+            border-radius: var(--border-radius-lg);
+            margin: 0 2rem 4rem;
+            border: 1px solid rgba(184, 115, 51, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .callout-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .callout-link {
+            background: transparent;
+            color: var(--riot-copper);
+            border: 1px solid var(--riot-copper);
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--border-radius-md);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .callout-link:hover {
+            background: rgba(184, 115, 51, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* FOOTER */
+        .riot-footer {
+            padding: 3rem 2rem;
+            background: rgba(10, 10, 10, 0.9);
+            border-top: 1px solid rgba(184, 115, 51, 0.1);
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-weight: 900;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, var(--riot-copper), var(--riot-copper-bright));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .footer-tagline {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .trademarks {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 2rem;
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes arrowFlow {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        @keyframes compassRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* PULSE ANIMATION FOR ACTIVE STEPS */
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(184, 115, 51, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(184, 115, 51, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(184, 115, 51, 0); }
+        }
+
+        .step-card.active .step-number {
+            animation: pulse 2s infinite;
+        }
+
+        /* FIX #4: Animation for inactive state */
+        @keyframes fadeToInactive {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(0.95);
+            }
+            100% {
+                opacity: 0.3;
+                transform: scale(0.98);
+            }
+        }
+
+        /* FIX #5: Pulse animation for active steps */
+        @keyframes pulseActive {
+            0%, 100% {
+                box-shadow: 0 0 15px rgba(184, 115, 51, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 25px rgba(184, 115, 51, 0.6);
+            }
+        }
+
+        /* MEDIA QUERIES */
+        @media (max-width: 1199px) {
+            .piz-container {
+                gap: 2rem;
+            }
+            
+            .hero-title {
+                font-size: 2.8rem;
+            }
+            
+            .dial-container {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin: 2rem auto;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .dial-container {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin: 2rem auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            /* Mobile-specific improvements */
+            .riot-line-container {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+            
+            .step-card {
+                flex: 0 0 calc(50% - 0.5rem);
+                min-width: calc(50% - 0.5rem);
+                margin-bottom: 0.5rem;
+            }
+            
+            .piz-container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .hero-title {
+                font-size: 2.2rem;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            .riot-header {
+                height: auto;
+                padding: 1rem 0;
+            }
+            
+            .tagline {
+                font-size: 0.9rem;
+                text-align: center;
+            }
+            
+            .procedural-callout {
+                flex-direction: column;
+                gap: 1.5rem;
+                text-align: center;
+                padding: 1.5rem;
+                margin: 1rem 1rem 3rem;
+            }
+            
+            .intervention-group {
+                min-width: 100%;
+                padding: 1rem;
+            }
+            
+            .intervention-products {
+                gap: 0.75rem;
+            }
+            
+            .intervention-product {
+                padding: 0.75rem;
+                min-height: 55px;
+            }
+            
+            .product-name {
+                font-size: 0.9rem;
+            }
+            
+            /* Prevent overlap on mobile */
+            .dial-container {
+                position: relative !important;
+                top: auto !important;
+                right: auto !important;
+                width: 140px;
+                height: 140px;
+                margin: 1rem auto;
+                order: -1;
+            }
+            
+            .riot-line-section {
+                padding: 1rem;
+                margin-bottom: 0;
+            }
+            
+            .riot-line-container {
+                order: 1;
+            }
+            
+            /* Mobile tap targets */
+            .go-bag-counter {
+                width: 55px;
+                height: 55px;
+            }
+            
+            .go-bag-btn {
+                padding: 1.2rem 2rem;
+            }
+            
+            /* Mobile compact mode adjustments */
+            body.interacting .hero-section {
+                padding: 0.5rem 1rem !important;
+            }
+            
+            body.interacting .hero-title {
+                font-size: 1.8rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            body.interacting .hero-subtitle {
+                font-size: 1rem;
+                margin-bottom: 1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .step-card {
+                flex: 0 0 100%;
+                min-width: 100%;
+            }
+            
+            .intervention-group {
+                min-width: 100%;
+            }
+            
+            .hero-section,
+            .riot-line-section,
+            .intervention-zone,
+            .product-info-zone,
+            .visual-legend,
+            .procedural-callout {
+                padding-left: 1rem;
+                padding-right: 1rem;
+                margin-left: 1rem;
+                margin-right: 1rem;
+            }
+            
+            .hero-title {
+                font-size: 1.8rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .dial-container {
+                width: 130px;
+                height: 130px;
+            }
+            
+            .logo-img {
+                height: 45px;
+            }
+            
+            .riot-header.scrolled .logo-img {
+                height: 35px;
+            }
+            
+            .logo-text {
+                font-size: 1.4rem;
+            }
+            
+            .tagline {
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .step-card {
+                padding: 0.5rem 0.25rem;
+            }
+            
+            .step-name {
+                font-size: 0.7rem;
+            }
+            
+            .step-category {
+                font-size: 0.55rem;
+            }
+            
+            .step-number {
+                width: 22px;
+                height: 22px;
+                font-size: 0.7rem;
+            }
+        }
+
+        /* LOADING SKELETON */
+        .skeleton {
+            background: linear-gradient(90deg, #1A1C1E 25%, #2D2F31 50%, #1A1C1E 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: 4px;
+        }
+
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* ACCESSIBILITY */
+        .step-card:focus,
+        .intervention-product:focus,
+        .go-bag-btn:focus,
+        .callout-link:focus {
+            outline: 2px solid var(--riot-copper);
+            outline-offset: 2px;
+        }
+
+        /* PRINT STYLES */
+        @media print {
+            .riot-header,
+            .go-bag-toast,
+            .go-bag-btn,
+            .callout-link,
+            .intervention-zone,
+            .dial-container {
+                display: none !important;
+            }
+            
+            body {
+                background: white;
+                color: black;
+            }
+            
+            .product-info-zone {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="riot-header">
+        <div class="header-content">
+            <div class="logo">
+                <!-- Client Logo in top-left -->
+                <img src="2222.png" alt="Riot Garage" class="logo-img">
+                <div class="logo-text-container">
+                    <div class="logo-text">RIOT GARAGE™</div>
+                    <div class="tagline">Frameworks, not formulas.</div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <div class="go-bag-counter" id="goBagCounter">
+                    <i class="fas fa-shopping-bag go-bag-icon"></i>
+                    <div class="counter-badge" id="counterBadge">0</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+        <div class="container">
+            <h1 class="hero-title">The Riot Line™ Interactive Framework</h1>
+            <p class="hero-subtitle">A premium visual system guiding the relentless pursuit of automotive excellence. Explore our 8-step chemistry framework and specialty interventions.</p>
+        </div>
+    </section>
+
+    <!-- RIOT LINE SECTION -->
+    <section class="riot-line-section">
+        <div class="container">
+            <h2 class="section-title">The Riot Line™</h2>
+            <p class="section-subtitle" style="color: var(--text-secondary); margin-bottom: 2rem;">A continuous journey of chemical precision — click any step to explore</p>
+            
+            <!-- DIAL - Static Arrow Version -->
+            <div class="dial-container" id="dialContainer">
+                <!-- Static Dial Background -->
+                <div class="dial-background">
+                    <!-- FIX #1: Changed to show step 1 highlighted by default -->
+                    <img src="dial-step-01.png" alt="8 Step Maintenance Cycle - Step 01" class="dial-bg-image">
+                </div>
+                
+                <!-- Fixed Arrow (Never Rotates) -->
+                <div class="dial-arrow">
+                    <div class="arrow-head"></div>
+                </div>
+                
+                <!-- Tooltip (Keep as is) -->
+                <div class="dial-tooltip">
+                    The Maintenance Cycle<br>
+                    Vehicle care isn't a one-time task.<br>
+                    Condition changes. Goals evolve.<br>
+                    The system adapts as needed.
+                </div>
+            </div>
+            
+            <div class="riot-line-container" id="riotLine">
+                <!-- Step cards will be generated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- PRODUCT INFORMATION ZONE (NOW BEFORE INTERVENTION ZONE) -->
+    <section class="product-info-zone">
+        <div class="container">
+            <h2 class="section-title">Product Information Zone™</h2>
+            
+            <div class="piz-container">
+                <!-- Left: Product Image -->
+                <div class="product-image-section">
+                    <!-- ===================================== -->
+                    <!-- PRODUCT IMAGE - DO NOT EDIT MANUALLY -->
+                    <!-- Image changes automatically on click -->
+                    <!-- ===================================== -->
+                    <div class="product-image-container">
+                        <img 
+                            id="productImage" 
+                            src="grip-bottle.png" 
+                            alt="GRIP Product Bottle"
+                            class="product-bottle-image"
+                        />
+                    </div>
+                    
+                    <div class="visual-legend">
+                        <h3 style="margin-bottom: 1rem; color: var(--text-primary); font-weight: 700;">Visual Legend</h3>
+                        <div class="legend-items">
+                            <div class="legend-item">
+                                <div class="legend-color full-contact"></div>
+                                <div class="legend-label">Full Contact Wash</div>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color rinseless"></div>
+                                <div class="legend-label">Rinseless / Field Wash</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right: Product Details -->
+                <div class="product-details">
+                    <div class="product-header">
+                        <div class="product-step" id="productStep">STEP 01</div>
+                        <h2 class="product-title" id="productTitle">GRIP</h2>
+                        <div class="product-sku-large" id="productSku">RG-STEP01-GRIP</div>
+                        <p class="product-blurb" id="productBlurb">
+                            Resets tire and rubber surfaces by removing old dressings, oxidation, and road residue.
+                        </p>
+                    </div>
+                    
+                    <div class="info-section">
+                        <h3 class="section-header">
+                            <i class="fas fa-flask section-icon"></i>
+                            What It Is / What It Does
+                        </h3>
+                        <div class="section-content" id="productDescription">
+                            A dedicated tire and rubber cleaner engineered to strip contaminants and restore raw rubber.
+                        </div>
+                    </div>
+                    
+                    <div class="info-section">
+                        <h3 class="section-header">
+                            <i class="fas fa-bullseye section-icon"></i>
+                            Capabilities
+                        </h3>
+                        <div class="section-content" id="productCapabilities">
+                            <ul>
+                                <li>Removes silicone and petroleum-based dressings</li>
+                                <li>Lifts oxidation and embedded grime</li>
+                                <li>Leaves a true matte, untreated finish</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="info-section">
+                        <h3 class="section-header">
+                            <i class="fas fa-chess-knight section-icon"></i>
+                            Strategic Intent
+                        </h3>
+                        <div class="section-content" id="productIntent">
+                            Protection and appearance depend on proper prep. GRIP establishes a clean foundation for rubber surfaces.
+                        </div>
+                    </div>
+                    
+                    <div class="info-section">
+                        <h3 class="section-header">
+                            <i class="fas fa-cogs section-icon"></i>
+                            Deployment Protocol
+                        </h3>
+                        <div class="section-content" id="productProtocol">
+                            Apply to cool tire → agitate with stiff brush → rinse thoroughly.
+                        </div>
+                    </div>
+                    
+                    <div class="info-section">
+                        <h3 class="section-header">
+                            <i class="fas fa-info-circle section-icon"></i>
+                            Good to Know
+                        </h3>
+                        <div class="section-content" id="productNotes">
+                            For rubber only. Not intended for painted, polished, or delicate trim surfaces.
+                        </div>
+                    </div>
+                    
+                    <div class="add-to-go-bag">
+                        <button class="go-bag-btn" id="addToGoBagBtn">
+                            <i class="fas fa-shopping-bag"></i>
+                            <span>Add to Go-Bag</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INTERVENTION ZONE (NOW AFTER PRODUCT INFORMATION) -->
+    <section class="intervention-zone">
+        <div class="container">
+            <h2 class="section-title intervention-title">
+                <i class="fas fa-crosshairs intervention-icon"></i>
+                Intervention Zone™
+            </h2>
+            <p class="section-subtitle" style="color: var(--text-secondary); margin-bottom: 2rem;">Conditional specialty products for targeted scenarios</p>
+            
+            <div class="intervention-groups">
+                <!-- Group A -->
+                <div class="intervention-group">
+                    <h3 class="group-title">
+                        <i class="fas fa-tint"></i>
+                        X-Series Group A - Pre-Wash Interventions
+                    </h3>
+                    <div class="waypoint-indicator">Between Step 01 (GRIP) and Step 02 (PURGE)</div>
+                    
+                    <div class="intervention-products">
+                        <!-- Products will be generated by JavaScript -->
+                    </div>
+                </div>
+                
+                <!-- Group B -->
+                <div class="intervention-group">
+                    <h3 class="group-title">
+                        <i class="fas fa-shield-alt"></i>
+                        X-Series Group B - Post-Wash Decontamination
+                    </h3>
+                    <div class="waypoint-indicator">Between Step 03 (ASSAULT) and Step 04 (CLARITY)</div>
+                    
+                    <div class="intervention-products">
+                        <!-- Products will be generated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Special Case -->
+            <div style="margin-top: 2rem; text-align: center;">
+                <div class="waypoint-indicator">Special Case</div>
+                <div class="intervention-product" data-product="x-field-wash" style="max-width: 500px; margin: 0 auto; position: relative;">
+                    <div class="product-name">
+                        <i class="fas fa-compass"></i>
+                        X FIELD WASH - Rinseless mode for lightly soiled vehicles
+                    </div>
+                    <div class="product-sku">RG-X-FIELD</div>
+                    <div class="field-wash-tooltip">
+                        This mode intentionally skips PURGE (Step 02) and ASSAULT (Step 03).<br>
+                        Designed for maintenance washes where full contact and decontamination are not required.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Arrow Visualization -->
+            <div class="arrow-visualization" id="arrowVisualization">
+                <div class="arrow-container">
+                    <div class="step-indicator">Step 01</div>
+                    <div class="arrow-line"></div>
+                    <div class="arrow-head"></div>
+                    <div class="arrow-line"></div>
+                    <div class="step-indicator">Step 02</div>
+                </div>
+                <div class="arrow-description" id="arrowDescription">
+                    Click on an Intervention product to see its arrow logic
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROCEDURAL CALLOUT -->
+    <section class="procedural-callout">
+        <div class="container">
+            <div class="callout-text">
+                The Riot Line™ represents chemistry. Procedural steps (wash, decontamination, protection) live on a separate page.
+            </div>
+            <a href="#" class="callout-link">
+                View Procedural Guidance <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="riot-footer">
+        <div class="container">
+            <div class="footer-logo">RIOT GARAGE™</div>
+            <p class="footer-tagline">
+                "If you're not having a Riot, why do it?" — Guidance for the relentless pursuit of excellence in automotive detailing.
+            </p>
+            <div class="trademarks">
+                Riot Garage™ • Riot Line™ • Riot Line Compass™ • Intervention Zone™ • Product Information Zone™
+            </div>
+        </div>
+    </footer>
+
+    <!-- GO-BAG TOAST -->
+    <div class="go-bag-toast" id="goBagToast">
+        <i class="fas fa-check-circle toast-icon"></i>
+        <div class="toast-content">
+            <h4>Added to your Go-Bag</h4>
+            <p>Supplies staged for your next mission</p>
+        </div>
+    </div>
+
+    <script>
+        // ==================== CANONICAL STEP MAPPING ====================
+        // THIS IS THE SINGLE SOURCE OF TRUTH - DO NOT DEVIATE
+        const RIOT_LINE_STEPS = {
+            1: { id: 1, number: "01", name: "GRIP", category: "Tire & Rubber Reset" },
+            2: { id: 2, number: "02", name: "PURGE", category: "Pre-Wash / Organic Soak" },
+            3: { id: 3, number: "03", name: "ASSAULT", category: "Full Contact Wash" },
+            4: { id: 4, number: "04", name: "CLARITY", category: "Optical Glass" },
+            5: { id: 5, number: "05", name: "SURFACE", category: "Cockpit Decontamination" },
+            6: { id: 6, number: "06", name: "OPS CENTER", category: "Interior Surface Defense" },
+            7: { id: 7, number: "07", name: "LUSTRE", category: "Visual Depth Enhancement" },
+            8: { id: 8, number: "08", name: "SHIELD", category: "Tactical Surface Defense" }
+        };
+
+        // ==================== STATE MANAGEMENT ====================
+        const state = {
+            activeStep: 1,
+            selectedProducts: [],
+            interventionActive: false,
+            scrollPosition: 0,
+            productData: {},
+            interventionData: {},
+            userHasInteracted: false,
+            dialCollapsed: false
+        };
+
+        // ==================== PRODUCT DATA ====================
+        const riotLineProducts = [
+            {
+                id: 1,
+                name: "GRIP",
+                step: "01",
+                category: "Tire & Rubber Reset",
+                sku: "RG-STEP01-GRIP",
+                blurb: "Resets tire and rubber surfaces by removing old dressings, oxidation, and road residue.",
+                description: "A dedicated tire and rubber cleaner engineered to strip contaminants and restore raw rubber.",
+                capabilities: [
+                    "Removes silicone and petroleum-based dressings",
+                    "Lifts oxidation and embedded grime",
+                    "Leaves a true matte, untreated finish"
+                ],
+                intent: "Protection and appearance depend on proper prep. GRIP establishes a clean foundation for rubber surfaces.",
+                protocol: "Apply to cool tire → agitate with stiff brush → rinse thoroughly.",
+                notes: "For rubber only. Not intended for painted, polished, or delicate trim surfaces."
+            },
+            {
+                id: 2,
+                name: "PURGE",
+                step: "02",
+                category: "Pre-Wash / Organic Soak",
+                sku: "RG-STEP02-PURGE",
+                blurb: "Loosens organic contamination before contact washing.",
+                description: "A versatile pre-clean and APC designed to break down organic grime and traffic film.",
+                capabilities: [
+                    "Softens bug residue and road film",
+                    "Reduces wash-induced friction",
+                    "Multi-surface safe when diluted properly"
+                ],
+                intent: "Every successful wash begins with controlled decontamination.",
+                protocol: "Dilute → apply to cool surface → dwell → rinse or agitate as needed.",
+                notes: "Excellent first strike for both exterior and interior prep."
+            },
+            {
+                id: 3,
+                name: "ASSAULT",
+                step: "03",
+                category: "Full Contact Wash",
+                sku: "RG-STEP03-ASSAULT",
+                blurb: "High-lubricity shampoo for controlled, safe contact washing.",
+                description: "A premium wash solution designed to lift contamination while minimizing surface friction.",
+                capabilities: [
+                    "Dense foam generation",
+                    "Strong lubrication",
+                    "Coating-safe formulation"
+                ],
+                intent: "Contact washing should be predictable, controlled, and repeatable.",
+                protocol: "Bucket or foam cannon → top-down wash → rinse thoroughly.",
+                notes: "pH-neutral and safe for protected surfaces."
+            },
+            {
+                id: 4,
+                name: "CLARITY",
+                step: "04",
+                category: "Optical Glass",
+                sku: "RG-STEP04-CLARITY",
+                blurb: "Streak-free glass clarity for interior and exterior surfaces.",
+                description: "A fast-evaporating automotive glass cleaner that eliminates haze without residue.",
+                capabilities: [
+                    "Removes oils and films",
+                    "Safe on tint",
+                    "No streaking or smearing"
+                ],
+                intent: "Clear glass improves safety and elevates perceived finish quality.",
+                protocol: "Spray lightly → wipe evenly → buff dry.",
+                notes: "Use dedicated towels for interior vs exterior glass."
+            },
+            {
+                id: 5,
+                name: "SURFACE",
+                step: "05",
+                category: "Cockpit Decontamination",
+                sku: "RG-STEP05-SURFACE",
+                blurb: "Cleans interior plastics and trim without adding gloss.",
+                description: "An interior surface cleaner formulated for modern dashboards, panels, and trim.",
+                capabilities: [
+                    "Removes body oils and dust",
+                    "Preserves texture and finish",
+                    "Leaves a factory-correct look"
+                ],
+                intent: "Interior surfaces should feel clean, not dressed.",
+                protocol: "Spray onto towel → wipe surface → light buff.",
+                notes: "This is a cleaner, not a protectant."
+            },
+            {
+                id: 6,
+                name: "OPS CENTER",
+                step: "06",
+                category: "Interior Surface Defense",
+                sku: "RG-STEP06-OPS",
+                blurb: "Protects and restores interior plastics and vinyl.",
+                description: "A non-greasy interior protectant that enhances color and resists UV degradation.",
+                capabilities: [
+                    "Restores faded surfaces",
+                    "Adds UV protection",
+                    "Maintains a low-sheen finish"
+                ],
+                intent: "Protection extends the service life of interior materials.",
+                protocol: "Apply with applicator → spread evenly → wipe excess.",
+                notes: "Not intended for leather or fabric."
+            },
+            {
+                id: 7,
+                name: "LUSTRE",
+                step: "07",
+                category: "Visual Depth Enhancement",
+                sku: "RG-STEP07-LUSTRE",
+                blurb: "Boosts gloss and slickness between major protection steps.",
+                description: "A spray wax and gloss enhancer for immediate visual improvement.",
+                capabilities: [
+                    "Enhances depth and shine",
+                    "Adds slickness",
+                    "Quick application"
+                ],
+                intent: "Immediate visual payoff without long cure times.",
+                protocol: "Spray on paint → spread evenly → buff off.",
+                notes: "Safe for use on cured coatings."
+            },
+            {
+                id: 8,
+                name: "SHIELD",
+                step: "08",
+                category: "Tactical Surface Defense",
+                sku: "RG-STEP08-SHIELD",
+                blurb: "Adds hydrophobic protection and reinforces existing coatings.",
+                description: "A spray-applied protective product designed for easy, repeatable defense.",
+                capabilities: [
+                    "Water repellency",
+                    "Gloss enhancement",
+                    "Maintenance layer for coatings"
+                ],
+                intent: "Protection should be accessible and repeatable.",
+                protocol: "Apply to clean, dry surface → spread → buff off.",
+                notes: "Ideal as a maintenance topper."
+            }
+        ];
+
+        const interventionProducts = {
+            groupA: [
+                {
+                    id: "x-dirty-details",
+                    name: "X-DIRTY DETAILS",
+                    sku: "RG-X-DIRTY",
+                    blurb: "Focused cleaning for heavily soiled areas prior to washing.",
+                    intent: "Address problem areas before full wash begins.",
+                    arrowDescription: "Applied between GRIP and PURGE for targeted pre-wash remediation",
+                    betweenSteps: [1, 2],
+                    activeSteps: [1, 2, 3, 4, 5, 6, 7, 8] // All steps active for this product
+                },
+                {
+                    id: "x-extraction",
+                    name: "X-EXTRACTION",
+                    sku: "RG-X-EXTRACT",
+                    blurb: "Breaks down organic contamination and staining.",
+                    intent: "Precision intervention where standard cleaners fall short.",
+                    arrowDescription: "Applied between GRIP and PURGE for organic/stain removal",
+                    betweenSteps: [1, 2],
+                    activeSteps: [1, 2, 3, 4, 5, 6, 7, 8] // All steps active
+                },
+                {
+                    id: "x-blaqout",
+                    name: "X-BLAQOUT",
+                    sku: "RG-X-BLAQ",
+                    blurb: "Removes residue, films, and bonded contaminants.",
+                    intent: "Controlled removal without surface damage.",
+                    arrowDescription: "Applied between GRIP and PURGE for adhesive/residue removal",
+                    betweenSteps: [1, 2],
+                    activeSteps: [1, 2, 3, 4, 5, 6, 7, 8] // All steps active
+                }
+            ],
+            groupB: [
+                {
+                    id: "x-fallout",
+                    name: "X-FALLOUT",
+                    sku: "RG-X-FAL",
+                    blurb: "Dissolves embedded ferrous contamination after washing.",
+                    intent: "Decontaminate paint prior to optical clarity or protection.",
+                    arrowDescription: "Applied between ASSAULT and CLARITY for iron/metallic decontamination",
+                    betweenSteps: [3, 4],
+                    activeSteps: [1, 2, 3, 4, 5, 6, 7, 8] // All steps active
+                }
+            ],
+            special: {
+                id: "x-field-wash",
+                name: "X-FIELD WASH",
+                sku: "RG-X-FIELD",
+                blurb: "Enables safe washing where water access is limited.",
+                intent: "Maintain standards when full contact washing isn't possible.",
+                arrowDescription: "Rinseless wash mode that bypasses PURGE (Step 02) and ASSAULT (Step 03)",
+                betweenSteps: [1, 4], // Skips steps 2 and 3
+                activeSteps: [1, 4, 5, 6, 7, 8] // Steps 2 and 3 are skipped
+            }
+        };
+
+        // ==================== DOM ELEMENTS ====================
+        const riotLineEl = document.getElementById('riotLine');
+        const productImageEl = document.getElementById('productImage');
+        const productStepEl = document.getElementById('productStep');
+        const productTitleEl = document.getElementById('productTitle');
+        const productSkuEl = document.getElementById('productSku');
+        const productBlurbEl = document.getElementById('productBlurb');
+        const productDescriptionEl = document.getElementById('productDescription');
+        const productCapabilitiesEl = document.getElementById('productCapabilities');
+        const productIntentEl = document.getElementById('productIntent');
+        const productProtocolEl = document.getElementById('productProtocol');
+        const productNotesEl = document.getElementById('productNotes');
+        const addToGoBagBtn = document.getElementById('addToGoBagBtn');
+        const goBagToast = document.getElementById('goBagToast');
+        const counterBadge = document.getElementById('counterBadge');
+        const arrowVisualization = document.getElementById('arrowVisualization');
+        const arrowDescription = document.getElementById('arrowDescription');
+        const goBagCounter = document.getElementById('goBagCounter');
+        const dialContainer = document.getElementById('dialContainer');
+
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 DOM loaded - initializing Riot Line');
+            initializeRiotLine();
+            initializeInterventionProducts();
+            updateProductInfo(1);
+            updateGoBagCounter();
+            
+            // Set initial state
+            state.activeStep = 1;
+            
+            // Set initial dial highlight for Step 1
+            updateDialHighlight(1);
+            
+            // Header scroll effect
+            window.addEventListener('scroll', handleHeaderScroll);
+            
+            // Keyboard navigation
+            document.addEventListener('keydown', handleKeyboardNavigation);
+            
+            // Go-Bag counter click
+            goBagCounter.addEventListener('click', showGoBagToast);
+            
+            // URL hash handling
+            window.addEventListener('hashchange', handleHashChange);
+            handleHashChange();
+            
+            // X FIELD WASH click event
+            const fieldWashEl = document.querySelector('.intervention-product[data-product="x-field-wash"]');
+            fieldWashEl.addEventListener('click', () => {
+                console.log('🖱️ X-FIELD WASH clicked');
+                selectInterventionProduct(interventionProducts.special);
+            });
+            
+            // Click anywhere to collapse dial (FIXED VERSION)
+            document.addEventListener('click', function(e) {
+                // Don't collapse if clicking on dial, steps, or interventions
+                const isDialClick = dialContainer.contains(e.target);
+                const isStepClick = e.target.closest('.step-card');
+                const isInterventionClick = e.target.closest('.intervention-product');
+                
+                // Only collapse on empty space clicks
+                if (!isDialClick && !isStepClick && !isInterventionClick) {
+                    collapseDial();
+                }
+                
+                // Mark that user has interacted
+                if (!state.userHasInteracted) {
+                    state.userHasInteracted = true;
+                    document.body.classList.add('interacting');
+                    
+                    // On mobile, scroll Riot Line into view
+                    if (window.innerWidth <= 768) {
+                        setTimeout(() => {
+                            riotLineEl.scrollIntoView({ 
+                                behavior: 'smooth', 
+                                block: 'center' 
+                            });
+                        }, 100);
+                    }
+                }
+            });
+            
+            // Touch events for mobile
+            document.addEventListener('touchstart', function() {
+                if (!state.userHasInteracted) {
+                    state.userHasInteracted = true;
+                    document.body.classList.add('interacting');
+                }
+            }, { passive: true });
+            
+            // Load persisted Go-Bag from sessionStorage
+            const savedGoBag = sessionStorage.getItem('riotGoBag');
+            if (savedGoBag) {
+                state.selectedProducts = JSON.parse(savedGoBag);
+            }
+        });
+
+        // ==================== FUNCTIONS ====================
+
+        function initializeRiotLine() {
+            console.log('📋 Initializing Riot Line steps');
+            riotLineEl.innerHTML = '';
+            
+            riotLineProducts.forEach(product => {
+                const stepCard = document.createElement('div');
+                stepCard.className = 'step-card';
+                stepCard.dataset.step = product.id;
+                
+                // FIX #5: Add debug logging
+                console.log(`Creating step card: ${product.id}`);
+                
+                stepCard.innerHTML = `
+                    <div class="step-number">${product.step}</div>
+                    <div class="step-name">${product.name}</div>
+                    <div class="step-category">${product.category}</div>
+                `;
+                
+                stepCard.addEventListener('click', () => {
+                    console.log(`🎯 Step ${product.id} clicked`);
+                    selectStep(product.id);
+                });
+                
+                riotLineEl.appendChild(stepCard);
+            });
+            
+            // Set first step as active
+            document.querySelector(`.step-card[data-step="1"]`).classList.add('active');
+            
+            console.log('✅ Riot Line initialized with', riotLineProducts.length, 'steps');
+        }
+
+        function initializeInterventionProducts() {
+            const groupAProducts = document.querySelector('.intervention-group:nth-child(1) .intervention-products');
+            const groupBProducts = document.querySelector('.intervention-group:nth-child(2) .intervention-products');
+            
+            // Group A products
+            interventionProducts.groupA.forEach(product => {
+                const productEl = createInterventionProductElement(product);
+                groupAProducts.appendChild(productEl);
+            });
+            
+            // Group B products
+            interventionProducts.groupB.forEach(product => {
+                const productEl = createInterventionProductElement(product);
+                groupBProducts.appendChild(productEl);
+            });
+        }
+
+        function createInterventionProductElement(product) {
+            const productEl = document.createElement('div');
+            productEl.className = 'intervention-product';
+            productEl.dataset.product = product.id;
+            
+            productEl.innerHTML = `
+                <div class="product-name">
+                    <i class="fas fa-bolt"></i>
+                    ${product.name}
+                </div>
+                <div class="product-sku">${product.sku}</div>
+            `;
+            
+            productEl.addEventListener('click', () => {
+                console.log(`🖱️ Intervention product clicked: ${product.name}`);
+                console.log(`📊 Active steps data:`, product.activeSteps);
+                selectInterventionProduct(product);
+            });
+            
+            return productEl;
+        }
+
+        function selectStep(stepId) {
+            console.log(`🎯 Selecting step ${stepId}`);
+            
+            // Mark user interaction
+            if (!state.userHasInteracted) {
+                state.userHasInteracted = true;
+                document.body.classList.add('interacting');
+            }
+            
+            // Reset Riot Line to show all steps as active
+            resetRiotLineSteps();
+            
+            // Clear any existing bypassed states
+            document.querySelectorAll('.step-card.bypassed').forEach(card => {
+                card.classList.remove('bypassed');
+            });
+            
+            // Update state
+            state.activeStep = stepId;
+            state.interventionActive = false;
+            
+            // Update URL hash
+            window.location.hash = `step-${stepId.toString().padStart(2, '0')}`;
+            
+            // Update Riot Line UI
+            document.querySelectorAll('.step-card').forEach(card => {
+                card.classList.remove('active');
+                card.classList.remove('inactive');
+            });
+            document.querySelector(`.step-card[data-step="${stepId}"]`).classList.add('active');
+            
+            // Update dial highlight (WITH IMAGE CHANGE)
+            updateDialHighlight(stepId);
+            
+            // Hide arrow visualization
+            arrowVisualization.classList.remove('active');
+            
+            // Reset intervention products
+            document.querySelectorAll('.intervention-product').forEach(product => {
+                product.classList.remove('active');
+            });
+            
+            // Update product info
+            updateProductInfo(stepId);
+            
+            // Scroll to Product Information Zone immediately
+            const productInfoZone = document.querySelector('.product-info-zone');
+            productInfoZone.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start'
+            });
+        }
+
+        function resetRiotLineSteps() {
+            console.log('🔄 Resetting Riot Line steps to normal');
+            document.querySelectorAll('.step-card').forEach(card => {
+                card.classList.remove('inactive');
+                card.classList.remove('bypassed');
+            });
+        }
+
+        function updateRiotLineSteps(activeSteps) {
+            console.log('════════════════════════════════════════');
+            console.log('🔄 Updating Riot Line Steps:', activeSteps);
+            console.log('════════════════════════════════════════');
+            
+            const allSteps = [1, 2, 3, 4, 5, 6, 7, 8];
+            
+            allSteps.forEach(stepNum => {
+                const stepElement = document.querySelector(`.step-card[data-step="${stepNum}"]`);
+                
+                if (!stepElement) {
+                    console.error(`❌ Step ${stepNum} element not found!`);
+                    return;
+                }
+                
+                // First remove all state classes
+                stepElement.classList.remove('active', 'inactive', 'bypassed');
+                
+                if (activeSteps.includes(stepNum)) {
+                    console.log(`✅ Step ${stepNum}: ACTIVE`);
+                    stepElement.classList.remove('inactive');
+                    stepElement.classList.remove('bypassed');
+                    
+                    // Add tooltip for skipped steps
+                    stepElement.removeAttribute('title');
+                } else {
+                    console.log(`⏭️ Step ${stepNum}: SKIPPED`);
+                    stepElement.classList.add('inactive');
+                    stepElement.classList.remove('active');
+                    
+                    // Add special styling for skipped steps in Field Wash
+                    if (state.interventionActive && 
+                        interventionProducts.special.activeSteps && 
+                        !interventionProducts.special.activeSteps.includes(stepNum)) {
+                        console.log(`🔴 Step ${stepNum}: Marking as BYPASSED`);
+                        stepElement.classList.add('bypassed');
+                        stepElement.setAttribute('title', 'Skipped due to Field Wash rinseless mode');
+                    }
+                }
+            });
+            
+            // Ensure at least one step has the active class for visual consistency
+            if (activeSteps.length > 0) {
+                const firstActiveStep = document.querySelector(`.step-card[data-step="${activeSteps[0]}"]`);
+                if (firstActiveStep) {
+                    firstActiveStep.classList.add('active');
+                }
+            }
+        }
+
+        function updateDialHighlight(stepId) {
+            console.log(`🎨 Updating dial to show step ${stepId}`);
+            
+            // Get the dial background image element
+            const dialImage = document.querySelector('.dial-bg-image');
+            
+            if (!dialImage) {
+                console.error('❌ Dial image element not found!');
+                return;
+            }
+            
+            // Map step IDs to dial image filenames
+            const dialImageMap = {
+                1: 'dial-step-01.png',
+                2: 'dial-step-02.png',
+                3: 'dial-step-03.png',
+                4: 'dial-step-04.png',
+                5: 'dial-step-05.png',
+                6: 'dial-step-06.png',
+                7: 'dial-step-07.png',
+                8: 'dial-step-08.png'
+            };
+            
+            // Get the correct dial image filename
+            const newImageSrc = dialImageMap[stepId] || '8 Step Logo.png';
+            
+            console.log(`📸 Changing dial image from "${dialImage.src.split('/').pop()}" to "${newImageSrc}"`);
+            
+            // Smooth transition: fade out → change → fade in
+            dialImage.style.transition = 'opacity 0.3s ease';
+            dialImage.style.opacity = '0.5';
+            
+            setTimeout(() => {
+                dialImage.src = newImageSrc;
+                dialImage.alt = `8 Step Maintenance Cycle - Step ${stepId}`;
+                dialImage.style.opacity = '1';
+            }, 150);
+            
+            // Remove the old highlight dot element (if it exists)
+            const oldHighlight = document.querySelector('.step-highlight');
+            if (oldHighlight) {
+                oldHighlight.remove();
+            }
+        }
+
+        function collapseDial() {
+            if (!state.dialCollapsed) {
+                dialContainer.classList.add('collapsed');
+                state.dialCollapsed = true;
+                
+                // Auto-expand after 5 seconds if user interacts with page again
+                setTimeout(() => {
+                    dialContainer.classList.remove('collapsed');
+                    state.dialCollapsed = false;
+                }, 5000);
+            }
+        }
+
+        function selectInterventionProduct(product) {
+            // FIX #4: ADD DEBUG LOGGING
+            console.log('════════════════════════════════════════');
+            console.log('🎯 INTERVENTION PRODUCT CLICKED');
+            console.log('Product Name:', product.name);
+            console.log('Product ID:', product.id);
+            console.log('Active Steps:', product.activeSteps);
+            console.log('════════════════════════════════════════');
+            
+            // Mark user interaction
+            if (!state.userHasInteracted) {
+                state.userHasInteracted = true;
+                document.body.classList.add('interacting');
+            }
+            
+            // Clear any existing bypassed states
+            document.querySelectorAll('.step-card.bypassed').forEach(card => {
+                card.classList.remove('bypassed');
+            });
+            
+            // Update Riot Line visual state (CRITICAL FIX #3)
+            const activeSteps = product.activeSteps || [1, 2, 3, 4, 5, 6, 7, 8];
+            console.log(`🔄 Updating Riot Line with active steps:`, activeSteps);
+            updateRiotLineSteps(activeSteps);
+            
+            // Update state
+            state.interventionActive = true;
+            
+            // Update UI
+            document.querySelectorAll('.intervention-product').forEach(el => {
+                el.classList.remove('active');
+            });
+            const activeProductEl = document.querySelector(`.intervention-product[data-product="${product.id}"]`);
+            if (activeProductEl) {
+                activeProductEl.classList.add('active');
+            }
+            
+            // Update arrow visualization
+            arrowVisualization.classList.add('active');
+            arrowDescription.textContent = product.arrowDescription;
+            
+            // Update step indicators in arrow visualization
+            const stepIndicators = arrowVisualization.querySelectorAll('.step-indicator');
+            if (product.betweenSteps[0] === 0) {
+                stepIndicators[0].textContent = "Start";
+                stepIndicators[1].textContent = `Step ${product.betweenSteps[1]}`;
+            } else {
+                stepIndicators[0].textContent = `Step ${product.betweenSteps[0]}`;
+                stepIndicators[1].textContent = `Step ${product.betweenSteps[1]}`;
+            }
+            
+            // Update product info for intervention product
+            updateInterventionProductInfo(product);
+            
+            // Mobile-specific behavior (FIX #4)
+            if (window.innerWidth <= 768) {
+                // First scroll to show the Riot Line with updated states
+                setTimeout(() => {
+                    riotLineEl.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center'
+                    });
+                    
+                    // Then scroll to arrow visualization after a short delay
+                    setTimeout(() => {
+                        arrowVisualization.scrollIntoView({ 
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+                    }, 300);
+                }, 100);
+            } else {
+                // Desktop: Smooth scroll to arrow visualization
+                arrowVisualization.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }
+        }
+
+        function updateProductInfo(stepId) {
+            const product = riotLineProducts.find(p => p.id === stepId);
+            
+            if (!product) return;
+            
+            // Update DOM elements
+            productStepEl.textContent = `STEP ${product.step}`;
+            productTitleEl.textContent = product.name;
+            productSkuEl.textContent = product.sku;
+            productBlurbEl.textContent = product.blurb;
+            productDescriptionEl.textContent = product.description;
+            
+            // Update capabilities list
+            productCapabilitiesEl.innerHTML = `
+                <ul>
+                    ${product.capabilities.map(cap => `<li>${cap}</li>`).join('')}
+                </ul>
+            `;
+            
+            productIntentEl.textContent = product.intent;
+            productProtocolEl.textContent = product.protocol;
+            productNotesEl.textContent = product.notes;
+            
+            // Update product image based on step
+            const imageMap = {
+                1: 'grip-bottle.png',
+                2: 'purge-bottle.png',
+                3: 'assault-bottle.png',
+                4: 'clarity-bottle.png',
+                5: 'surface-bottle.png',
+                6: 'ops-bottle.png',
+                7: 'lustre-bottle.png',
+                8: 'shield-bottle.png'
+            };
+            
+            productImageEl.src = imageMap[stepId];
+            productImageEl.alt = `${product.name} Product Bottle`;
+            
+            // Update Add to Go-Bag button
+            updateAddToGoBagButton(product.sku);
+        }
+
+        function updateInterventionProductInfo(product) {
+            // For intervention products, use a generic placeholder or first product image
+            productImageEl.src = 'grip-bottle.png';
+            productImageEl.alt = `${product.name} Product Bottle`;
+            
+            productStepEl.textContent = "INTERVENTION";
+            productTitleEl.textContent = product.name;
+            productSkuEl.textContent = product.sku;
+            productBlurbEl.textContent = product.blurb;
+            productDescriptionEl.textContent = product.intent;
+            
+            // For intervention products, simplify the display
+            productCapabilitiesEl.innerHTML = `<p>Specialty product for targeted application.</p>`;
+            productIntentEl.textContent = product.intent;
+            productProtocolEl.textContent = "Apply as needed based on specific contamination scenario.";
+            productNotesEl.textContent = "Consult product documentation for specific usage guidelines.";
+            
+            // Update Add to Go-Bag button
+            updateAddToGoBagButton(product.sku);
+        }
+
+        function updateAddToGoBagButton(sku) {
+            const isAdded = state.selectedProducts.includes(sku);
+            
+            if (isAdded) {
+                addToGoBagBtn.innerHTML = `<i class="fas fa-check"></i><span>Added to Go-Bag</span>`;
+                addToGoBagBtn.classList.add('added');
+                addToGoBagBtn.disabled = true;
+            } else {
+                addToGoBagBtn.innerHTML = `<i class="fas fa-shopping-bag"></i><span>Add to Go-Bag</span>`;
+                addToGoBagBtn.classList.remove('added');
+                addToGoBagBtn.disabled = false;
+            }
+            
+            // Update event listener
+            addToGoBagBtn.onclick = function(e) {
+                if (!isAdded) {
+                    addToGoBag(sku, e);
+                }
+            };
+        }
+
+        function addToGoBag(sku, event) {
+            // Add to state
+            state.selectedProducts.push(sku);
+            
+            // Update UI
+            updateAddToGoBagButton(sku);
+            updateGoBagCounter();
+            
+            // Show toast
+            showGoBagToast();
+            
+            // Create ripple effect
+            createRippleEffect(event);
+            
+            // Persist to sessionStorage
+            sessionStorage.setItem('riotGoBag', JSON.stringify(state.selectedProducts));
+        }
+
+        function updateGoBagCounter() {
+            const count = state.selectedProducts.length;
+            counterBadge.textContent = count;
+            
+            // Animate if count changed
+            if (count > 0) {
+                counterBadge.style.transform = 'scale(1.2)';
+                setTimeout(() => {
+                    counterBadge.style.transform = 'scale(1)';
+                }, 300);
+            }
+        }
+
+        function showGoBagToast() {
+            goBagToast.classList.add('show');
+            
+            setTimeout(() => {
+                goBagToast.classList.remove('show');
+            }, 3000);
+        }
+
+        function createRippleEffect(event) {
+            const button = event.currentTarget;
+            const circle = document.createElement("span");
+            const diameter = Math.max(button.clientWidth, button.clientHeight);
+            const radius = diameter / 2;
+            
+            circle.style.width = circle.style.height = `${diameter}px`;
+            circle.style.left = `${event.clientX - button.getBoundingClientRect().left - radius}px`;
+            circle.style.top = `${event.clientY - button.getBoundingClientRect().top - radius}px`;
+            circle.classList.add("ripple");
+            
+            const ripple = button.getElementsByClassName("ripple")[0];
+            
+            if (ripple) {
+                ripple.remove();
+            }
+            
+            button.appendChild(circle);
+        }
+
+        function handleHeaderScroll() {
+            const header = document.querySelector('.riot-header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        }
+
+        function handleKeyboardNavigation(e) {
+            // Left/Right arrow keys to navigate steps
+            if (e.key === 'ArrowRight' && state.activeStep < 8) {
+                selectStep(state.activeStep + 1);
+            } else if (e.key === 'ArrowLeft' && state.activeStep > 1) {
+                selectStep(state.activeStep - 1);
+            }
+            
+            // Space/Enter to add to Go-Bag when focused on button
+            if ((e.key === ' ' || e.key === 'Enter') && document.activeElement === addToGoBagBtn && !addToGoBagBtn.disabled) {
+                const currentProduct = state.interventionActive ? 
+                    (document.querySelector('.intervention-product.active')?.dataset.product ? 
+                     interventionProducts.groupA.find(p => p.id === document.querySelector('.intervention-product.active').dataset.product) || 
+                     interventionProducts.groupB.find(p => p.id === document.querySelector('.intervention-product.active').dataset.product) || 
+                     interventionProducts.special : null) : 
+                    riotLineProducts.find(p => p.id === state.activeStep);
+                
+                if (currentProduct) {
+                    addToGoBag(currentProduct.sku, { currentTarget: addToGoBagBtn, clientX: addToGoBagBtn.offsetLeft + 10, clientY: addToGoBagBtn.offsetTop + 10 });
+                }
+            }
+        }
+
+        function handleHashChange() {
+            const hash = window.location.hash;
+            if (hash) {
+                const stepMatch = hash.match(/step-(\d{2})/);
+                if (stepMatch) {
+                    const stepId = parseInt(stepMatch[1]);
+                    if (stepId >= 1 && stepId <= 8) {
+                        selectStep(stepId);
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
